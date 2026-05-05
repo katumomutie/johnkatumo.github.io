@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>John Katumo Mutie</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050508;
+    --surface: #0d0d14;
+    --card: #111118;
+    --accent: #00f5a0;
+    --accent2: #00d9f5;
+    --accent3: #f500a0;
+    --text: #eeeef5;
+    --muted: #6b6b80;
+    --border: rgba(255,255,255,0.06);
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    width: 12px; height: 12px;
+    background: var(--accent);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.1s ease;
+    mix-blend-mode: difference;
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1.5px solid var(--accent);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    transition: all 0.15s ease;
+    mix-blend-mode: difference;
+  }
+
+  /* Noise overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9997;
+    opacity: 0.4;
+  }
+
+  /* Nav */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 24px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    backdrop-filter: blur(20px);
+    background: rgba(5,5,8,0.7);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 3px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .nav-links { display: flex; gap: 36px; }
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 13px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 500;
+    transition: color 0.3s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+
+  /* Hero */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 120px 48px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 80% 50%, rgba(0,245,160,0.07) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 20% 80%, rgba(0,217,245,0.05) 0%, transparent 60%),
+      radial-gradient(ellipse 30% 30% at 60% 20%, rgba(245,0,160,0.04) 0%, transparent 50%);
+  }
+
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  .hero-content { position: relative; z-index: 1; max-width: 900px; }
+
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0,245,160,0.08);
+    border: 1px solid rgba(0,245,160,0.2);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 32px;
+    animation: fadeUp 0.8s ease forwards;
+    opacity: 0;
+  }
+  .hero-tag::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  .hero-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(72px, 12vw, 160px);
+    line-height: 0.9;
+    letter-spacing: 2px;
+    animation: fadeUp 0.8s 0.1s ease forwards;
+    opacity: 0;
+  }
+  .hero-name .line1 { display: block; color: var(--text); }
+  .hero-name .line2 {
+    display: block;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hero-sub {
+    font-size: 18px;
+    color: var(--muted);
+    margin: 28px 0 48px;
+    font-weight: 300;
+    line-height: 1.6;
+    max-width: 500px;
+    animation: fadeUp 0.8s 0.2s ease forwards;
+    opacity: 0;
+  }
+  .hero-sub span { color: var(--text); font-weight: 500; }
+
+  .hero-cta {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    animation: fadeUp 0.8s 0.3s ease forwards;
+    opacity: 0;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #000;
+    padding: 14px 32px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    transition: all 0.3s;
+    display: inline-block;
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0,245,160,0.3);
+  }
+  .btn-secondary {
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 14px 32px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 14px;
+    transition: all 0.3s;
+    display: inline-block;
+    backdrop-filter: blur(10px);
+  }
+  .btn-secondary:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .hero-scroll {
+    position: absolute;
+    bottom: 40px;
+    left: 48px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    animation: fadeUp 0.8s 0.5s ease forwards;
+    opacity: 0;
+  }
+  .scroll-line {
+    width: 40px;
+    height: 1px;
+    background: var(--muted);
+    position: relative;
+    overflow: hidden;
+  }
+  .scroll-line::after {
+    content: '';
+    position: absolute;
+    left: -100%;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--accent);
+    animation: scrollLine 2s infinite;
+  }
+  @keyframes scrollLine {
+    to { left: 100%; }
+  }
+
+  /* Stats bar */
+  .stats-bar {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 32px 48px;
+    display: flex;
+    gap: 0;
+    overflow: hidden;
+  }
+  .stat {
+    flex: 1;
+    text-align: center;
+    padding: 0 24px;
+    border-right: 1px solid var(--border);
+  }
+  .stat:last-child { border-right: none; }
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+
+  /* Sections */
+  section { padding: 100px 48px; }
+
+  .section-label {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+    font-weight: 600;
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 800;
+    line-height: 1.05;
+    margin-bottom: 60px;
+  }
+
+  /* About */
+  .about { background: var(--surface); }
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .about-text {
+    font-size: 17px;
+    line-height: 1.8;
+    color: #aaaabc;
+    font-weight: 300;
+  }
+  .about-text p { margin-bottom: 20px; }
+  .about-text strong { color: var(--text); font-weight: 500; }
+
+  .about-cards { display: flex; flex-direction: column; gap: 16px; }
+  .about-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .about-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: linear-gradient(to bottom, var(--accent), var(--accent2));
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .about-card:hover { border-color: rgba(0,245,160,0.2); transform: translateX(4px); }
+  .about-card:hover::before { opacity: 1; }
+  .card-icon { font-size: 32px; }
+  .card-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 16px; }
+  .card-desc { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+  /* Skills */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+  }
+  .skill-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .skill-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 0%, rgba(0,245,160,0.05), transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .skill-card:hover { border-color: rgba(0,245,160,0.25); transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+  .skill-card:hover::after { opacity: 1; }
+
+  .skill-icon { font-size: 40px; margin-bottom: 20px; }
+  .skill-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 20px; margin-bottom: 8px; }
+  .skill-desc { font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 20px; }
+
+  .skill-bar-wrap { background: rgba(255,255,255,0.05); border-radius: 100px; height: 4px; overflow: hidden; }
+  .skill-bar {
+    height: 100%;
+    border-radius: 100px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transition: width 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+    width: 0;
+  }
+  .skill-level { font-size: 12px; color: var(--accent); font-weight: 600; margin-top: 8px; letter-spacing: 1px; }
+
+  /* Interests - gamer + footballer */
+  .interests { background: var(--surface); }
+  .interests-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+  .interest-card {
+    border-radius: 20px;
+    padding: 48px 40px;
+    position: relative;
+    overflow: hidden;
+    min-height: 280px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+  .interest-card.gaming {
+    background: linear-gradient(135deg, #0d0d1a 0%, #1a0d2e 100%);
+    border: 1px solid rgba(150, 50, 255, 0.2);
+  }
+  .interest-card.football {
+    background: linear-gradient(135deg, #0d1a0d 0%, #0d2e1a 100%);
+    border: 1px solid rgba(0, 245, 160, 0.2);
+  }
+
+  .interest-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .interest-card.gaming::before {
+    background: radial-gradient(ellipse at top right, rgba(150,50,255,0.15), transparent 60%);
+  }
+  .interest-card.football::before {
+    background: radial-gradient(ellipse at top right, rgba(0,245,160,0.1), transparent 60%);
+  }
+
+  .interest-emoji {
+    font-size: 64px;
+    position: absolute;
+    top: 32px;
+    right: 32px;
+    filter: drop-shadow(0 0 20px rgba(150,50,255,0.5));
+    animation: float 4s ease-in-out infinite;
+  }
+  .interest-card.football .interest-emoji {
+    filter: drop-shadow(0 0 20px rgba(0,245,160,0.5));
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .interest-tag {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .interest-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px;
+    letter-spacing: 2px;
+    line-height: 1;
+  }
+  .interest-card.gaming .interest-title { color: #b980ff; }
+  .interest-card.football .interest-title { color: var(--accent); }
+  .interest-desc {
+    font-size: 14px;
+    color: var(--muted);
+    margin-top: 10px;
+    line-height: 1.6;
+  }
+
+  /* Education / Timeline */
+  .timeline { position: relative; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--accent), var(--accent2), transparent);
+  }
+
+  .timeline-item {
+    padding-left: 40px;
+    padding-bottom: 48px;
+    position: relative;
+  }
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -5px;
+    top: 6px;
+    width: 11px; height: 11px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 16px rgba(0,245,160,0.5);
+  }
+  .timeline-year {
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  .timeline-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .timeline-sub { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+  /* Contact */
+  .contact { background: var(--surface); text-align: center; }
+  .contact-inner { max-width: 600px; margin: 0 auto; }
+  .contact-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(60px, 10vw, 120px);
+    line-height: 0.9;
+    letter-spacing: 2px;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 24px;
+  }
+  .contact-sub { font-size: 16px; color: var(--muted); line-height: 1.7; margin-bottom: 48px; }
+
+  .contact-links { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+  .contact-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 24px;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s;
+  }
+  .contact-link:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0,245,160,0.15);
+  }
+
+  /* Footer */
+  footer {
+    padding: 32px 48px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  footer span { color: var(--accent); }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    nav { padding: 20px 24px; }
+    .nav-links { display: none; }
+    .hero { padding: 100px 24px 60px; }
+    .stats-bar { padding: 24px; flex-wrap: wrap; gap: 24px; }
+    .stat { border-right: none; border-bottom: 1px solid var(--border); padding-bottom: 24px; }
+    .stat:last-child { border-bottom: none; }
+    section { padding: 60px 24px; }
+    .about-grid { grid-template-columns: 1fr; gap: 40px; }
+    .interests-grid { grid-template-columns: 1fr; }
+    footer { flex-direction: column; gap: 12px; text-align: center; }
+    .hero-scroll { left: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<nav>
+  <div class="nav-logo">JKM</div>
+  <div class="nav-links">
+    <a href="#about">About</a>
+    <a href="#skills">Skills</a>
+    <a href="#interests">Vibes</a>
+    <a href="#education">Education</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-tag">📍 Machakos, Kenya · Built Different, Destined for Greatness</div>
+    <h1 class="hero-name">
+      <span class="line1">JOHN KATUMO</span>
+      <span class="line2">MUTIE</span>
+    </h1>
+    <p class="hero-sub">
+      <span>Developer. Gamer. Footballer.</span> Stats & Programming Student.<br>
+      Building things with code, crunching numbers, breaking records on the pitch, and dominating every game I touch.
+    </p>
+    <div class="hero-cta">
+      <a href="#contact" class="btn-primary">Get In Touch</a>
+      <a href="#skills" class="btn-secondary">See My Skills</a>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    Scroll
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat">
+    <div class="stat-num">2025</div>
+    <div class="stat-label">KCSE Graduate</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">C+</div>
+    <div class="stat-label">KCSE Grade</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">2</div>
+    <div class="stat-label">Languages Spoken</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">∞</div>
+    <div class="stat-label">Ambition Level</div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="section-label">Who I Am</div>
+  <div class="about-grid">
+    <div>
+      <h2 class="section-title">Built Different.<br>Wired to Win.</h2>
+      <div class="about-text">
+        <p>I'm <strong>John Katumo Mutie</strong> — a 2025 KCSE graduate from Kangundo High School, Machakos County. I'm the kind of guy who doesn't wait for opportunity — I build it.</p>
+        <p>Currently grinding through <strong>Python</strong> and <strong>web development</strong>, working towards a career in software. At the same time, I'm heading to <strong>law school</strong> — because understanding the system is just as powerful as building on top of it.</p>
+        <p>On the side? <strong>Gamer. Footballer. Science Fair competitor.</strong> I bring the same competitive energy to everything I do.</p>
+      </div>
+    </div>
+    <div class="about-cards">
+      <div class="about-card reveal">
+        <div class="card-icon">⚖️</div>
+        <div>
+          <div class="card-title">Stats & Programming Student</div>
+          <div class="card-desc">Enrolled for Statistics &amp; Programming — data meets code</div>
+        </div>
+      </div>
+      <div class="about-card reveal">
+        <div class="card-icon">💻</div>
+        <div>
+          <div class="card-title">Self-Taught Developer</div>
+          <div class="card-desc">Python, web dev — learning every single day</div>
+        </div>
+      </div>
+      <div class="about-card reveal">
+        <div class="card-icon">🔬</div>
+        <div>
+          <div class="card-title">KSEF Competitor</div>
+          <div class="card-desc">Competed in the Kenya Science & Engineering Fair in high school</div>
+        </div>
+      </div>
+      <div class="about-card reveal">
+        <div class="card-icon">🌍</div>
+        <div>
+          <div class="card-title">Bilingual</div>
+          <div class="card-desc">Fluent in English & Kiswahili — communicating across cultures</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-label">What I Do</div>
+  <h2 class="section-title">Skills &<br>Abilities</h2>
+  <div class="skills-grid">
+    <div class="skill-card reveal">
+      <div class="skill-icon">🐍</div>
+      <div class="skill-name">Python</div>
+      <div class="skill-desc">Intermediate level. Scripts, logic, problem-solving. Currently levelling up every day.</div>
+      <div class="skill-bar-wrap"><div class="skill-bar" data-width="65"></div></div>
+      <div class="skill-level">INTERMEDIATE</div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon">🌐</div>
+      <div class="skill-name">Web Development</div>
+      <div class="skill-desc">HTML, CSS, JavaScript — building the frontend one project at a time.</div>
+      <div class="skill-bar-wrap"><div class="skill-bar" data-width="45"></div></div>
+      <div class="skill-level">LEARNING</div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon">🧠</div>
+      <div class="skill-name">Problem Solving</div>
+      <div class="skill-desc">Software problems, logical thinking, creative solutions. This is my zone.</div>
+      <div class="skill-bar-wrap"><div class="skill-bar" data-width="80"></div></div>
+      <div class="skill-level">STRONG</div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon">💬</div>
+      <div class="skill-name">Communication</div>
+      <div class="skill-desc">Fluent English & Kiswahili. Clear, direct, no fluff.</div>
+      <div class="skill-bar-wrap"><div class="skill-bar" data-width="90"></div></div>
+      <div class="skill-level">FLUENT</div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon">⚡</div>
+      <div class="skill-name">Fast Learner</div>
+      <div class="skill-desc">Picks up new tools, languages and concepts rapidly. Curiosity is the engine.</div>
+      <div class="skill-bar-wrap"><div class="skill-bar" data-width="95"></div></div>
+      <div class="skill-level">ELITE</div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon">📋</div>
+      <div class="skill-name">Data Annotation</div>
+      <div class="skill-desc">AI training tasks — evaluating, labelling and improving machine learning models.</div>
+      <div class="skill-bar-wrap"><div class="skill-bar" data-width="50"></div></div>
+      <div class="skill-level">DEVELOPING</div>
+    </div>
+  </div>
+</section>
+
+<!-- INTERESTS -->
+<section class="interests" id="interests">
+  <div class="section-label">My Vibes</div>
+  <h2 class="section-title">Beyond<br>The Code</h2>
+  <div class="interests-grid">
+    <div class="interest-card gaming reveal">
+      <div class="interest-emoji">🎮</div>
+      <div class="interest-tag">Passion #01</div>
+      <div class="interest-title">GAMER</div>
+      <div class="interest-desc">Competitive mindset. Strategic thinking. Never a casual — always playing to win. Gaming taught me patience, reflexes, and how to read situations fast.</div>
+    </div>
+    <div class="interest-card football reveal">
+      <div class="interest-emoji">⚽</div>
+      <div class="interest-tag">Passion #02</div>
+      <div class="interest-title">FOOTBALLER</div>
+      <div class="interest-desc">Represented Kangundo High School on the pitch. Football built my discipline, teamwork and drive. The field is where character is forged.</div>
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education">
+  <div class="section-label">My Journey</div>
+  <h2 class="section-title">Education &<br>Milestones</h2>
+  <div class="timeline">
+    <div class="timeline-item reveal">
+      <div class="timeline-year">2025</div>
+      <div class="timeline-title">KCSE — Kangundo High School</div>
+      <div class="timeline-sub">Completed Kenya Certificate of Secondary Education with a C+ grade. Competed in the Kenya Science & Engineering Fair (KSEF). Active member of the school football team.</div>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-year">2025 — Present</div>
+      <div class="timeline-title">Self-Taught Python & Web Development</div>
+      <div class="timeline-sub">Independently studying Python (intermediate level) and web development. Building real skills for the global tech economy — no waiting around.</div>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-year">2025 — 2026</div>
+      <div class="timeline-title">Statistics & Programming — Incoming</div>
+      <div class="timeline-sub">Enrolled for a Statistics and Programming degree at university. Combining data analysis with coding expertise to build real solutions in the tech world.</div>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-year">Future</div>
+      <div class="timeline-title">Statistics + Programming. The Full Package.</div>
+      <div class="timeline-sub">Building towards a career in data science, software development, and tech innovation. The goal is clear. The grind is real.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="contact-inner">
+    <div class="section-label">Let's Connect</div>
+    <div class="contact-title">HIT ME<br>UP</div>
+    <p class="contact-sub">Whether it's a project, a collab, or just to say what's good — I'm always open. Based in Machakos, Kenya 🇰🇪 — reach out via phone or socials, always down to connect.</p>
+    <div class="contact-links">
+      <a href="https://wa.me/254728173635" target="_blank" class="contact-link">
+        <span>💬</span> WhatsApp Me
+      </a>
+      <a href="https://www.instagram.com/still_john__/" target="_blank" class="contact-link">
+        <span>📸</span> @still_john__
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div>© 2025 <span>John Katumo Mutie</span> — Machakos, Kenya 🇰🇪</div>
+  <div>Built with 💚 & ambition</div>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx - 6 + 'px';
+    cursor.style.top = my - 6 + 'px';
+  });
+
+  function animRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx - 18 + 'px';
+    ring.style.top = ry - 18 + 'px';
+    requestAnimationFrame(animRing);
+  }
+  animRing();
+
+  document.querySelectorAll('a, button').forEach(el => {
+    el.addEventListener('mouseenter', () => { cursor.style.transform = 'scale(2)'; ring.style.transform = 'scale(1.5)'; });
+    el.addEventListener('mouseleave', () => { cursor.style.transform = 'scale(1)'; ring.style.transform = 'scale(1)'; });
+  });
+
+  // Scroll reveal
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 80);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Skill bars
+  const barObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const bar = e.target.querySelector('.skill-bar');
+        if (bar) bar.style.width = bar.dataset.width + '%';
+      }
+    });
+  }, { threshold: 0.3 });
+
+  document.querySelectorAll('.skill-card').forEach(el => barObserver.observe(el));
+</script>
+</body>
+</html>
